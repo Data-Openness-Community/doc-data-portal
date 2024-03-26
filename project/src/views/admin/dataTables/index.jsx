@@ -41,6 +41,7 @@ import CheckTable from "views/admin/dataTables/components/CheckTable";
 
 import React, { useState, useEffect } from "react";
 import Select from 'react-select';
+import config from 'config'
 
 
 export default function Settings() {
@@ -57,8 +58,8 @@ export default function Settings() {
   const [titleData, setTitleData] = useState(false);
   const [ isOpen, setIsOpen ] = useState(false);
 
-  const apiUrl = "http://datamgmtdemo01.eastasia.cloudapp.azure.com/listalldatasets";
-  console.log(`ListALLDatasets URL: ${apiUrl}`)
+  const apiUrl = config.listDatasetUrl
+
   useEffect(() => {
     fetch(apiUrl)
       .then((res) => {
@@ -102,7 +103,8 @@ export default function Settings() {
       return;
     }
     setError(null)
-    const url = `http://datamgmtdemo01.eastasia.cloudapp.azure.com/showdatasetdesc?name=${selectedOption.value}`
+    const descDatasetUrl = config.descDatasetUrl
+    const url = `${descDatasetUrl}&name=${selectedOption.value}`
     fetch(url)
       .then((res) => {
         if (!res.ok) {

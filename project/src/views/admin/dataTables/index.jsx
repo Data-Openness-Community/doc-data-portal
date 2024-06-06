@@ -21,12 +21,12 @@
 */
 
 // Chakra imports
-import { 
+import {
   Box
   , Grid
   , GridItem
   , Progress
-  ,Modal,
+  , Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
@@ -34,7 +34,10 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure
-  ,Button
+  , Button
+  , Stack
+  , Flex
+  , Text
 } from "@chakra-ui/react";
 
 import CheckTable from "views/admin/dataTables/components/CheckTable";
@@ -56,7 +59,7 @@ export default function Settings() {
   const [isDisabled, setIsDisabled] = useState(false);
   const [isRtl, setIsRtl] = useState(false);
   const [titleData, setTitleData] = useState(false);
-  const [ isOpen, setIsOpen ] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const apiUrl = config.listDatasetUrl
 
@@ -99,7 +102,7 @@ export default function Settings() {
 
 
   const handleSelectChange = (selectedOption) => {
-    if (selectedOption === null){
+    if (selectedOption === null) {
       return;
     }
     setError(null)
@@ -162,6 +165,27 @@ export default function Settings() {
   // Chakra Color Mode
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+
+      <Flex px='10px' justify='space-between' mb='5px' align='center'>
+        <Stack spacing={3}>
+          <Text
+            // color={errorColor}
+            fontSize='15px'
+            fontWeight='700'
+            lineHeight='100%'
+          >
+            Please select the dataset in sandbox for requesting deployment to production. </Text>
+          <Text
+            // color={errorColor}
+            fontSize='15px'
+            fontWeight='700'
+            lineHeight='100%'
+          >
+            Dataset has to be registered and approved in Data Catalog before production deployment
+          </Text>
+        </Stack>
+      </Flex>
+      <Box w="100%" p={4} color="white"></Box>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -185,7 +209,7 @@ export default function Settings() {
       // spacing={{ base: "20px", xl: "20px" }}
       >
         <GridItem width="350px" colSpan={1}>
-          {isLoading && ( <Progress size="md" isIndeterminate />)}
+          {isLoading && (<Progress size="md" isIndeterminate />)}
           {!isLoading && data && (
             <Select
               className="basic-single"
@@ -203,21 +227,21 @@ export default function Settings() {
             />
           )}
         </GridItem>
-          {showTable && 
-            (<GridItem colStart={2} rowSpan={2}>
-              <CheckTable 
-                columnsData={columnsDataCheck} 
-                tableData={tableData} 
-                titleData={titleData} 
-                error={error} 
-                setError={setError} 
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-              />
-            </GridItem>
-            )
-          }
-        </Grid>
+        {showTable &&
+          (<GridItem colStart={2} rowSpan={2}>
+            <CheckTable
+              columnsData={columnsDataCheck}
+              tableData={tableData}
+              titleData={titleData}
+              error={error}
+              setError={setError}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
+          </GridItem>
+          )
+        }
+      </Grid>
     </Box>
   );
 }

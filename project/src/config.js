@@ -1,8 +1,9 @@
 const config = {
-    listDatasetUrl: "http://HOST_IP/listalldatasets?db=admin"
-    ,descDatasetUrl: "http://HOST_IP/showdatasetdesc?db=admin"
-    ,requestDatasetDeployUrl: "http://HOST_IP/submit-ticket"
-    ,genAiResponseUrl: "http://HOST_IP/genai-response"
+    listDatasetUrl: "http://20.2.2.199/listalldatasets?db=admin"
+    ,descDatasetUrl: "http://20.2.2.199/showdatasetdesc?db=admin"
+    ,requestDatasetDeployUrl: "http://20.2.2.199/submit-ticket"
+    ,genAiResponseUrl: "http://20.2.2.199/genai-response"
+    ,adminAccount: "email@example.org"
 };
   
 export default config;

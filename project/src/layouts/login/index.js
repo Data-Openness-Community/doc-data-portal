@@ -19,21 +19,30 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
-// import routes from 'routes.js';
-// import { generateRoutes } from "routes";
+import Config from "config";
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState("");
+    const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [emailError, setEmailError] = useState(""); // State for email error message
     const history = useHistory();
     const toast = useToast(); // Using Chakra UI's toast for notifications
+    const validUsers = [
+        { email: Config.adminAccount, password: Config.adminPw },
+        { email: Config.userAccount, password: Config.userPw }
+    ];
 
-    const handleShowClick = () => setShowPassword(!showMPassword);
+    const validateCredentials = () => {
+        return validUsers.some(user => user.email === email && user.password === password);
+    };
+
+    const handleShowClick = () => setShowPassword(!showPassword);
     const handleLogin = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -42,7 +51,14 @@ export default function Login() {
             setIsSubmitting(false);
             return;
         }
+        if (!validateCredentials()) {
+            setEmailError("Invalid email or password.");
+            setPasswordError("Invalid email or password.");
+            setIsSubmitting(false);
+            return;
+        }
         setEmailError(""); // Clear any existing errors
+        setPasswordError("");
         localStorage.setItem('loginName', email);
         // setRoutes(generateRoutes(email));
         history.push('/admin');
@@ -75,6 +91,8 @@ export default function Login() {
                                     <Input 
                                         type={showPassword ? "text" : "password"} 
                                         placeholder="Password" 
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        isInvalid={Boolean(passwordError)}
                                     />
                                     <InputRightElement width="4.5rem">
                                         <Button h="1.75rem" size="sm" onClick={handleShowClick}>

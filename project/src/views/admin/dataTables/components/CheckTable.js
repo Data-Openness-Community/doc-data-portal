@@ -63,6 +63,8 @@ export default function CheckTable(props) {
   const errorColor = useColorModeValue("red.600", "orange.100");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
 
+  const loginName = localStorage.getItem('loginName')
+
   function validateDescription(value) {
     let error;
     if (!value) {
@@ -112,10 +114,7 @@ export default function CheckTable(props) {
               item => ({
                 ...item
                 , dataset_path: titleData
-                // , create_datetime: new Date().toISOString()
-                // , create_user: "frontend"
-                // , last_modified_datetime: new Date().toISOString()
-                // , last_modified_user: "frontend"
+                , customer: loginName
               })
             );
             // console.log(JSON.stringify(finalResult, null, 2))

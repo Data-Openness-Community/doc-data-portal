@@ -20,9 +20,10 @@ import {
 
 // Custom components
 import Card from "components/card/Card";
+import Menu from "components/menu/MainMenu";
 
 
-export default function DataCatalogTable(props) {
+export default function SampleDataTable(props) {
   const { columnsData, tableData, datasetname } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
@@ -48,17 +49,17 @@ export default function DataCatalogTable(props) {
   } = tableInstance;
   initialState.pageSize = 5;
 
-  const textColor = useColorModeValue("secondaryGray.900", "white");
+  const textColor = useColorModeValue("blue", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
       direction='column'
-      w='50%'
-      h='20%'
+      w='100%'
       px='0px'
       overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Table {...getTableProps()} variant='simple' color='gray.500' size="sm">
-        <TableCaption placement="top">Table "{datasetname}" column definition</TableCaption>
+        
+      <Table {...getTableProps()} variant='striped' colorScheme='teal' size="sm">
+        <TableCaption placement="top">Sample data for Table "{datasetname}"</TableCaption>
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
@@ -86,47 +87,21 @@ export default function DataCatalogTable(props) {
             return (
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
-                  let data = "";
-                  if (cell.column.Header === "NAME") {
-                    data = (
+                  let data = (
                       <Flex align='center'>
                         <Text color={textColor} fontSize='sm' fontWeight='700'>
                           {cell.value}
                         </Text>
                       </Flex>
                     );
-                  } else if (cell.column.Header === "DESCRIPTION") {
-                    data = (
-                      <Flex align='center'>
-                        <Text
-                          me='10px'
-                          color={textColor}
-                          fontSize='sm'
-                          fontWeight='700'>
-                          {cell.value}
-                        </Text>
-                      </Flex>
-                    );
-                  } else if (cell.column.Header === "IS_SENSITIVE") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "DATA_TYPE") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  }
+ 
                   return (
                     <Td
                       {...cell.getCellProps()}
                       key={index}
                       fontSize={{ sm: "14px" }}
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor='transparent'>
+                      borderColor={borderColor}>
                       {data}
                     </Td>
                   );

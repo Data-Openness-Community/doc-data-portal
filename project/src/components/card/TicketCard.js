@@ -22,13 +22,15 @@ import {
 import Card from "components/card/Card.js";
 // Assets
 import React, { useState } from "react";
-import { IoHeart, IoHeartOutline, IoStar, IoStarOutline } from "react-icons/io5";
 import Config from 'config';
 import DataCatalogTable from "views/admin/dataTables/components/DataCatalogTable";
+import SampleDataTable from "views/admin/dataTables/components/SampleDataTable";
 
 
 export default function TicketCard(props) {
   const [tableData, setTableData] = useState([]);
+  const [sampleData, setSampleData] = useState([]);
+  const [sampleColumnData, setSampleColumnData] = useState([]);
   const { title, firstname, lastname, email, id, datasetname } = props;
   const [like, setLike] = useState(false);
   const [requested, setRequested] = useState(false);
@@ -39,37 +41,38 @@ export default function TicketCard(props) {
   const onClose = () => setIsOpen(false);
   const [columnsDataCheck, setColumnsDataCheck] = useState([]);
 
+  const generateColumns = (data) => {
+    if (data.length === 0) return [];
+  
+    const sampleObject = data[0];
+    return Object.keys(sampleObject).map(key => ({
+      Header: key,
+      accessor: key
+    }));
+  };
+
   function csvToJson(csvString) {
     // Split the CSV string into lines using the line break and filter out any empty lines
     const lines = csvString.split("\r\n").filter(line => line);
-  
+
     // Extract headers from the first line
     const headers = lines[0].split(",");
 
     const transformedHeaders = headers.map(key => {
-          return { Header: key.toUpperCase(), accessor: key };
+      return { Header: key.toUpperCase(), accessor: key };
     });
 
     setColumnsDataCheck(transformedHeaders);
-  
-    // Map the index of each header for easy access
-    const nameIndex = headers.indexOf("name");
-    const descIndex = headers.indexOf("description");
-    const isSensitiveIndex = headers.indexOf("is_sensitive");
-    const dataTypeIndex = headers.indexOf("data_type");
 
-  
-    // Iterate over each line after the header and create JSON objects
     const result = lines.slice(1).map(line => {
       const values = line.split(",");
-      return {
-        name: values[nameIndex],
-        description: values[descIndex],
-        is_sensitive: values[isSensitiveIndex],
-        data_type: values[dataTypeIndex]
-      };
+      // Reduce the values into a single object using header names as keys
+      return values.reduce((obj, value, index) => {
+        obj[headers[index]] = value; // Use header from headers array as key
+        return obj;
+      }, {});
     });
-  
+
     return result;
   }
 
@@ -91,6 +94,26 @@ export default function TicketCard(props) {
         setIsOpen(true);
         // setTitleData(selectedOption.value);
         // setShowTable(true);
+      })
+      .catch((error) => {
+        console.error(error)
+      });
+
+    const dataSampleUrl = `http://${Config.dataPropagateHost}/datapropagate?db=admin&view=${datasetname}&count=10`
+
+    fetch(dataSampleUrl)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
+      .then((tableCatalog) => {        
+        // Function to generate columns from data keys
+        const columns = generateColumns(tableCatalog);
+
+        setSampleData(tableCatalog); // If you want to update state with this json, uncomment this line
+        setSampleColumnData(columns);
       })
       .catch((error) => {
         console.error(error)
@@ -136,25 +159,26 @@ export default function TicketCard(props) {
                     <ModalHeader>{title}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                    {
-          (<GridItem colStart={2} rowSpan={2}>
-            <DataCatalogTable
-              columnsData={columnsDataCheck}
-              tableData={tableData}
-              datasetname = {datasetname}
-              // titleData={titleData}
-              // error={error}
-              // setError={setError}
-              // isOpen={isOpen}
-              // setIsOpen={setIsOpen}
-            />
-          </GridItem>
-          )
-        }
+                      {
+                        (
+                        <GridItem colStart={2} rowSpan={2}>
+                          <DataCatalogTable
+                            columnsData={columnsDataCheck}
+                            tableData={tableData}
+                            datasetname={datasetname}
+                          />
+                          <SampleDataTable
+                            columnsData={sampleColumnData}
+                            tableData={sampleData}
+                            datasetname={datasetname}
+                          />
+                        </GridItem>
+                        )
+                      }
                     </ModalBody>
                     <ModalFooter>
                       <Button variant="lightBrand" mr={3} onClick={onClose}>Close</Button>
-                      
+
                     </ModalFooter>
                   </ModalContent>
                 </Modal>

@@ -47,7 +47,7 @@ import Nft4 from "assets/img/nfts/Nft4.png";
 import Nft5 from "assets/img/nfts/Nft5.png";
 import Nft6 from "assets/img/nfts/Nft6.png";
 
-export default function Marketplace() {
+export default function Approval() {
 
   // States
   // const [searchString, setSearchString] = useState("");
@@ -60,14 +60,16 @@ export default function Marketplace() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch(Config.listTicketUrl);
+        const response = await fetch(`http://${Config.manageTicketHost}/listticket`);
         const data = await response.json();
         // Create a new array from the fetched data
         const loadedTickets = Object.keys(data).map(key => ({
           title: data[key].title,
           firstname: data[key].customer_firstname,
           lastname: data[key].customer_lastname,
-          email: data[key].customer_email
+          email: data[key].customer_email,
+          id: data[key].id,
+          datasetname: data[key].datasetname
         }));
         // Update the state with the new array
         setTickets(loadedTickets);
@@ -111,6 +113,8 @@ export default function Marketplace() {
                     firstname={ticket.firstname}
                     lastname={ticket.lastname}
                     email={ticket.email}
+                    id={ticket.id}
+                    datasetname={ticket.datasetname}
                   />
                 ))
               }

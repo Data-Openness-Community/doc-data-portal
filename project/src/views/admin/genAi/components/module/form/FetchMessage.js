@@ -25,7 +25,7 @@ class FetchMessage extends Component {
         // Include other properties from the step or user input if needed
       };
 
-      const response = await fetch(config.genAiResponseUrl, {
+      const response = await fetch(`http://${config.genAiHost}/genai-response`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

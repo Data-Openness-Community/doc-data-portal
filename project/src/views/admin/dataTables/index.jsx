@@ -61,7 +61,7 @@ export default function Settings() {
   const [titleData, setTitleData] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const apiUrl = config.listDatasetUrl
+  const apiUrl = `http://${config.listDatasetHost}/listalldatasets?db=admin`
 
   useEffect(() => {
     fetch(apiUrl)
@@ -106,7 +106,7 @@ export default function Settings() {
       return;
     }
     setError(null)
-    const descDatasetUrl = config.descDatasetUrl
+    const descDatasetUrl = `http://${config.host}/showdatasetdesc?db=admin`
     const url = `${descDatasetUrl}&name=${selectedOption.value}`
     fetch(url)
       .then((res) => {

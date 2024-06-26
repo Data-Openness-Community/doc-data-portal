@@ -38,7 +38,9 @@ export default function TicketCard(props) {
   const textColorBid = useColorModeValue("brand.500", "white");
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const [isOpen, setIsOpen] = useState(false);
+  const [isApprovedOpen, setIsApprovedOpen] = useState(false);
   const onClose = () => setIsOpen(false);
+  const onApprovedClose = () => setIsApprovedOpen(false);
   const [columnsDataCheck, setColumnsDataCheck] = useState([]);
 
   const generateColumns = (data) => {
@@ -120,6 +122,36 @@ export default function TicketCard(props) {
       });
   };
 
+  const approveTicket = (ticket_id, datasetname) => {
+    if (ticket_id === null) {
+      return;
+    }
+
+    const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}`
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    };
+
+    fetch(approveTicketUrl, requestOptions)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.text();
+      })
+      .then((resString) => {      
+        setIsApprovedOpen(true)  
+        console.log(resString)
+      })
+      .catch((error) => {
+        console.error(error)
+      });
+  };
+
   return (
     <Card p='20px'>
       <Flex direction={{ base: "column" }} justify='center'>
@@ -182,6 +214,26 @@ export default function TicketCard(props) {
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
+                <Modal isOpen={isApprovedOpen} onClose={onApprovedClose} size='sm' isCentered>
+                  <ModalOverlay />
+                  <ModalContent>
+                    {/* <ModalHeader>{title}</ModalHeader> */}
+                    <ModalCloseButton />
+                    <ModalBody>
+                      {
+                        (
+                        <Text>
+                        {"The ticket has been approved"}
+                        </Text>
+                        )
+                      }
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button variant="lightBrand" mr={3} onClick={onApprovedClose}>Close</Button>
+
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
               </>
               <Text
                 color='secondaryGray.600'
@@ -221,7 +273,7 @@ export default function TicketCard(props) {
                 xl: "10px",
                 "2xl": "0px",
               }}
-              onClick={() => setRequested(true)}
+              onClick={() => approveTicket(id,datasetname)}
             // isDisabled={requested}
             >
               {'Approve'}

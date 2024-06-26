@@ -106,7 +106,7 @@ export default function Settings() {
       return;
     }
     setError(null)
-    const descDatasetUrl = `http://${config.host}/showdatasetdesc?db=admin`
+    const descDatasetUrl = `http://${config.listDatasetHost}/showdatasetdesc?db=admin`
     const url = `${descDatasetUrl}&name=${selectedOption.value}`
     fetch(url)
       .then((res) => {

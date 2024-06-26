@@ -120,7 +120,7 @@ export default function CheckTable(props) {
             // console.log(JSON.stringify(finalResult, null, 2))
             const body = JSON.stringify(finalResult)
             console.log(body)
-            const url = `http://${config.host}/submit-ticket`
+            const url = `http://${config.submitTicketHost}/submit-ticket`
             // const url = "http://localhost:5001/request-dataset-deploy"
 
             fetch(url, {

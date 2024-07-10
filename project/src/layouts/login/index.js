@@ -33,14 +33,21 @@ export default function Login() {
     const [emailError, setEmailError] = useState(""); // State for email error message
     const history = useHistory();
     const toast = useToast(); // Using Chakra UI's toast for notifications
-    const validUsers = [
-        { email: Config.adminAccount, password: Config.adminPw },
-        { email: Config.userAccount, password: Config.userPw }
-    ];
+    const validUsers = Config.validUsers
 
     const validateCredentials = () => {
         return validUsers.some(user => user.email === email && user.password === password);
     };
+
+    function getAdminStatus(email) {
+        for (let user of Config.validUsers) {
+            if (user.email === email) {
+                // Return the admin value if it exists, otherwise return "N"
+                return user.admin || "N";
+            }
+        }
+        return "User not found"; // or you could return null or throw an error
+    }
 
     const handleShowClick = () => setShowPassword(!showPassword);
     const handleLogin = async (event) => {
@@ -60,6 +67,7 @@ export default function Login() {
         setEmailError(""); // Clear any existing errors
         setPasswordError("");
         localStorage.setItem('loginName', email);
+        localStorage.setItem('admin', getAdminStatus(email))
         // setRoutes(generateRoutes(email));
         history.push('/admin');
     };

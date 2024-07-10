@@ -25,9 +25,8 @@ import Config from "./config"
 
 // Function to get user email
 const getUserEmail = () => localStorage.getItem('loginName');
+const isAdmin = () => localStorage.getItem('admin'); 
 
-// Define email for special access
-const specialEmail = Config.adminAccount;
 
 export const generateRoutes = (userEmail) => [
   {
@@ -38,11 +37,11 @@ export const generateRoutes = (userEmail) => [
     component: NFTMarketplace,
   },
   {
-    name: userEmail === specialEmail ? "Dataset promotion approval" : "Dataset promotion request",
+    name: isAdmin() === 'Y' ? "Dataset promotion approval" : "Dataset promotion request",
     layout: "/admin",
     icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
     path: "/data-tables",
-    component: userEmail === specialEmail ? Approval : DataTables,
+    component: isAdmin() === 'Y' ? Approval : DataTables,
   },
   {
     name: "Gen AI chatroom",
@@ -71,11 +70,11 @@ const routes = [
     component: NFTMarketplace,
   },
   {
-    name: getUserEmail() === specialEmail ? "Dataset promotion approval" : "Dataset promotion request",
+    name: isAdmin() === 'Y' ? "Dataset promotion approval" : "Dataset promotion request",
     layout: "/admin",
     icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
     path: "/data-tables",
-    component: getUserEmail() === specialEmail ? Approval : DataTables,
+    component: isAdmin() === 'Y' ? Approval : DataTables,
   },
   {
     name: "Gen AI chatroom",
@@ -92,27 +91,6 @@ const routes = [
     component: GenAi,
     secondary: true,
   },
-  // {
-  //   name: "Profile",
-  //   layout: "/admin",
-  //   path: "/profile",
-  //   icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
-  //   component: Profile,
-  // },
-  // {
-  //   name: "Sign In",
-  //   layout: "/auth",
-  //   path: "/sign-in",
-  //   icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
-  //   component: SignInCentered,
-  // },
-  // {
-  //   name: "RTL Admin",
-  //   layout: "/rtl",
-  //   path: "/rtl-default",
-  //   icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
-  //   component: RTL,
-  // },
 ];
 
 export default routes;

@@ -94,7 +94,7 @@ export default function CheckTable(props) {
               const descriptionValueKey = `description_${index}`;
               const isSensitiveValueKey = `isSensitive_${index}`;
               let description = values[descriptionValueKey];
-              let is_sensitive = values[isSensitiveValueKey] ? 1 : 0;
+              let is_sensitive = values[isSensitiveValueKey];
 
               return {
                 ...field,
@@ -110,13 +110,14 @@ export default function CheckTable(props) {
               const { type, ...rest } = item; // Destructure to exclude the type property
               return rest;
             })
-            const finalResult = tempResult.map(
-              item => ({
-                ...item
-                , dataset_path: titleData
-                , customer: loginName
-              })
-            );
+
+            const finalResult = {
+              field_definition: tempResult
+              , dataset_path: titleData
+              , customer: loginName
+              ,table_description: values['table-description']
+            };
+
             // console.log(JSON.stringify(finalResult, null, 2))
             const body = JSON.stringify(finalResult)
             console.log(body)
@@ -175,6 +176,35 @@ export default function CheckTable(props) {
                 {titleData}
               </Text>
               {/* <Menu /> */}
+            </Flex>
+            <Flex px='25px' justify='space-between' mb='20px' align='center'>
+            <Text
+                color={textColor}
+                fontSize='15px'
+                fontWeight='700'
+                lineHeight='100%'>
+                Table Description:
+              </Text>
+              
+              <Field name="table-description" validate={validateDescription}>
+                              {({ field, form }) => (
+                                <FormControl isInvalid={form.errors[field.name] && form.touched.name}>
+                                  {/* <FormLabel htmlFor="name">First name</FormLabel> */}
+                                  <Input
+                                    {...field}
+                                    // id="description"
+                                    placeholder="Table Description"
+                                    color={textColor}
+                                    fontSize='sm'
+                                    fontWeight='700'
+                                    borderRadius='16px'
+                                    // width="50%"
+                                    isRequired="true"
+                                  />
+                                  <FormErrorMessage>{form.errors[field.name]}</FormErrorMessage>
+                                </FormControl>
+                              )}
+                            </Field>
             </Flex>
             <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
               <Thead>

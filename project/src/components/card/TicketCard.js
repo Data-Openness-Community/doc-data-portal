@@ -122,12 +122,12 @@ export default function TicketCard(props) {
       });
   };
 
-  const approveTicket = (ticket_id, datasetname) => {
+  const approveTicket = (ticket_id, datasetname, email) => {
     if (ticket_id === null) {
       return;
     }
 
-    const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}`
+    const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}&datasetOwner=${email}`
 
     const requestOptions = {
       method: 'PUT',
@@ -273,7 +273,7 @@ export default function TicketCard(props) {
                 xl: "10px",
                 "2xl": "0px",
               }}
-              onClick={() => approveTicket(id,datasetname)}
+              onClick={() => approveTicket(id,datasetname,email)}
             // isDisabled={requested}
             >
               {'Approve'}

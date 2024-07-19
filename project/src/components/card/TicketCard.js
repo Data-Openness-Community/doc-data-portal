@@ -31,7 +31,7 @@ export default function TicketCard(props) {
   const [tableData, setTableData] = useState([]);
   const [sampleData, setSampleData] = useState([]);
   const [sampleColumnData, setSampleColumnData] = useState([]);
-  const { title, firstname, lastname, email, id, datasetname } = props;
+  const { title, firstname, lastname, email, id, datasetname, tabledescription } = props;
   const [like, setLike] = useState(false);
   const [requested, setRequested] = useState(false);
   const textColor = useColorModeValue("navy.700", "white");
@@ -45,7 +45,7 @@ export default function TicketCard(props) {
 
   const generateColumns = (data) => {
     if (data.length === 0) return [];
-  
+
     const sampleObject = data[0];
     return Object.keys(sampleObject).map(key => ({
       Header: key,
@@ -110,7 +110,7 @@ export default function TicketCard(props) {
         }
         return res.json();
       })
-      .then((tableCatalog) => {        
+      .then((tableCatalog) => {
         // Function to generate columns from data keys
         const columns = generateColumns(tableCatalog);
 
@@ -143,8 +143,8 @@ export default function TicketCard(props) {
         }
         return res.text();
       })
-      .then((resString) => {      
-        setIsApprovedOpen(true)  
+      .then((resString) => {
+        setIsApprovedOpen(true)
         console.log(resString)
       })
       .catch((error) => {
@@ -193,18 +193,18 @@ export default function TicketCard(props) {
                     <ModalBody>
                       {
                         (
-                        <GridItem colStart={2} rowSpan={2}>
-                          <DataCatalogTable
-                            columnsData={columnsDataCheck}
-                            tableData={tableData}
-                            datasetname={datasetname}
-                          />
-                          <SampleDataTable
-                            columnsData={sampleColumnData}
-                            tableData={sampleData}
-                            datasetname={datasetname}
-                          />
-                        </GridItem>
+                          <GridItem colStart={2} rowSpan={2}>
+                            <DataCatalogTable
+                              columnsData={columnsDataCheck}
+                              tableData={tableData}
+                              datasetname={datasetname}
+                            />
+                            <SampleDataTable
+                              columnsData={sampleColumnData}
+                              tableData={sampleData}
+                              datasetname={datasetname}
+                            />
+                          </GridItem>
                         )
                       }
                     </ModalBody>
@@ -222,9 +222,9 @@ export default function TicketCard(props) {
                     <ModalBody>
                       {
                         (
-                        <Text>
-                        {"The ticket has been approved"}
-                        </Text>
+                          <Text>
+                            {"The ticket has been approved"}
+                          </Text>
                         )
                       }
                     </ModalBody>
@@ -246,6 +246,28 @@ export default function TicketCard(props) {
                 {firstname}{' '}{lastname}
               </Text>
             </Flex>
+          </Flex>
+          <Flex
+            align='start'
+            // justify='space-between'
+            direction={{
+              base: "row",
+              md: "column",
+              lg: "row",
+              xl: "column",
+              "2xl": "row",
+            }}
+            mt='5px'>
+            <Text
+              color='secondaryGray.600'
+              fontSize={{
+                base: "sm",
+              }}
+              mb='7px'
+              fontWeight='400'
+              me='14px'>
+              {tabledescription}
+            </Text>
           </Flex>
           <Flex
             align='start'
@@ -273,12 +295,13 @@ export default function TicketCard(props) {
                 xl: "10px",
                 "2xl": "0px",
               }}
-              onClick={() => approveTicket(id,datasetname,email)}
+              onClick={() => approveTicket(id, datasetname, email)}
             // isDisabled={requested}
             >
               {'Approve'}
             </Button>
           </Flex>
+          
         </Flex>
       </Flex>
     </Card>

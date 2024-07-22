@@ -127,7 +127,7 @@ export default function TicketCard(props) {
       return;
     }
 
-    const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}&datasetOwner=${email}`
+    const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}&datasetOwner=${email}&datasetDescription=${tabledescription}`
 
     const requestOptions = {
       method: 'PUT',

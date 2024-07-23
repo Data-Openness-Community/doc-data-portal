@@ -4,7 +4,7 @@ import {
   Button,
   Flex,
   Icon,
-  Image,
+  GridItem ,
   Link,
   Modal,
   ModalBody,
@@ -15,7 +15,8 @@ import {
   ModalOverlay,
   Text,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
+  Tooltip
 } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card.js";
@@ -23,19 +24,81 @@ import { Player } from '@lordicon/react';
 // Assets
 import React, { useState, useRef } from "react";
 import { IoHeart, IoHeartOutline, IoStar, IoStarOutline } from "react-icons/io5";
+import DataCatalogTable from "views/admin/dataTables/components/DataCatalogTable";
+import SampleDataTable from "views/admin/dataTables/components/SampleDataTable";
+import Config from 'config';
 
 export default function DatasetCard(props) {
-  const { owner, table_description, datasetname, rating } = props;
-  const [like, setLike] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const [sampleData, setSampleData] = useState([]);
+  const [sampleColumnData, setSampleColumnData] = useState([]);
+  const { owner, table_description, datasetname, rating, fields } = props;
   const [requested, setRequested] = useState(false);
   const textColor = useColorModeValue("navy.700", "white");
   const textColorBid = useColorModeValue("brand.500", "white");
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const ICON = require('assets/dataset.json');
+  const onClose = () => setIsOpen(false);
+  const [columnsDataCheck, setColumnsDataCheck] = useState([]);
 
   const playerRef = useRef(null);
   const handleMouseEnter = () => {
     playerRef.current?.playFromBeginning();
+  };
+
+  const generateColumns = (data) => {
+    if (data.length === 0) return [];
+
+    const sampleObject = data[0];
+    return Object.keys(sampleObject).map(key => ({
+      Header: key,
+      accessor: key
+    }));
+  };
+
+  const outputDataCatalog = () => {
+        const columnData = [
+          {
+            Header: "NAME",
+            accessor: "fieldPath",
+          },
+          {
+            Header: "DESCRIPTION",
+            accessor: "description",
+          },
+          {
+            Header: "IS_SENSITIVE",
+            accessor: "isSensitive",
+          },
+          {
+            Header: "DATA_TYPE",
+            accessor: "type",
+          },
+        ]
+        setColumnsDataCheck(columnData);
+        setTableData(fields.fields); // If you want to update state with this json, uncomment this line
+        setIsOpen(true);
+
+
+    const dataSampleUrl = `http://${Config.dataPropagateHost}/datapropagate?db=admin&view=${datasetname}&count=10`
+
+    fetch(dataSampleUrl)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
+      .then((tableCatalog) => {
+        // Function to generate columns from data keys
+        const columns = generateColumns(tableCatalog);
+
+        setSampleData(tableCatalog); // If you want to update state with this json, uncomment this line
+        setSampleColumnData(columns);
+      })
+      .catch((error) => {
+        console.error(error)
+      });
   };
 
   return (
@@ -46,7 +109,6 @@ export default function DatasetCard(props) {
             <Player
               ref={playerRef}
               icon={ICON}
-              onMouseEnter={handleMouseEnter}
               size={80}
             />
           </div>
@@ -62,45 +124,58 @@ export default function DatasetCard(props) {
               "2xl": "row",
             }}
             mb='auto'>
-            <Text
-              color='secondaryGray.900'
-              fontSize={{
-                base: "md",
-              }}
-              mb='7px'
-              fontWeight='600'
-              me='14px'>
-              {datasetname}
-            </Text>
+            <Tooltip label={table_description} aria-label='A tooltip'>
+              {/* <Text
+                color='secondaryGray.900'
+                fontSize={{
+                  base: "md",
+                }}
+                mb='7px'
+                fontWeight='600'
+                me='14px'>
+                {datasetname}
+              </Text> */}
+              <Link
+                color='secondaryGray.900'
+                fontSize={{
+                  base: "md",
+                }}
+                mb='7px'
+                fontWeight='600'
+                me='14px'
+                onClick={outputDataCatalog}
+              >
+                {datasetname}
+              </Link>
+            </Tooltip>
             <Flex direction='row' align='end'>
               <>
-                <Modal isOpen={isOpen} onClose={onClose} size='xl' isCentered>
+              <Modal isOpen={isOpen} onClose={onClose} size='full' isCentered>
                   <ModalOverlay />
                   <ModalContent>
-                    <ModalHeader>{name}</ModalHeader>
+                    <ModalHeader>{datasetname}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                      {/* <Flex justify='center'>
-                        <Image
-                          // src={image}
-                          w={{ base: "50%", "3xl": "50%" }}
-                          h={{ base: "50%", "3xl": "50%" }}
-                          borderRadius='20px'
-                          mb='20px'
-                        />
-                      </Flex> */}
-                      <Text>
-                        Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis.
-
-                        Sunt ad dolore quis aute consequat. Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis. Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                      </Text>
+                      {
+                        (
+                          <GridItem colStart={2} rowSpan={2}>
+                            <DataCatalogTable
+                              columnsData={columnsDataCheck}
+                              tableData={tableData}
+                              datasetname={datasetname}
+                            />
+                            <SampleDataTable
+                              columnsData={sampleColumnData}
+                              tableData={sampleData}
+                              datasetname={datasetname}
+                            />
+                          </GridItem>
+                        )
+                      }
                     </ModalBody>
                     <ModalFooter>
                       <Button variant="lightBrand" mr={3} onClick={onClose}>Close</Button>
-                      {/* TODO: modify */}
-                      <Link href="https://app.dremio.cloud/sonar/a340bd7d-89a1-4670-8bec-84278b1cf4ec/source/demo-catalog-01" target="_blank">
-                        <Button variant="brand">Explore data</Button>
-                      </Link>
+
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
@@ -129,49 +204,49 @@ export default function DatasetCard(props) {
               "2xl": "row",
             }}
             mt='5px'>
-              <Text fontWeight='700' fontSize='sm' color={textColorBid}>
-                {rating !== "No rating" && "Rating:" || rating}
-              </Text>
+            <Text fontWeight='700' fontSize='sm' color={textColorBid}>
+              {rating !== "No rating" && "Rating:" || rating}
+            </Text>
             {rating !== "No rating" && (
-            <Flex direction='row'>
-              <Icon
-                transition='0.2s linear'
-                w='20px'
-                h='20px'
-                as={rating >= 0.5 ? IoStar : IoStarOutline}
-                color='brand.500'
-              />
-              <Icon
-                transition='0.2s linear'
-                w='20px'
-                h='20px'
-                as={rating >= 1.5 ? IoStar : IoStarOutline}
-                color='brand.500'
-              />
-              <Icon
-                transition='0.2s linear'
-                w='20px'
-                h='20px'
-                as={rating >= 2.5 ? IoStar : IoStarOutline}
-                color='brand.500'
-              />
-              <Icon
-                transition='0.2s linear'
-                w='20px'
-                h='20px'
-                as={rating >= 3.5 ? IoStar : IoStarOutline}
-                color='brand.500'
-              />
-              <Icon
-                transition='0.2s linear'
-                w='20px'
-                h='20px'
-                as={rating >= 4.5 ? IoStar : IoStarOutline}
-                color='brand.500'
-              />
-            </Flex>
+              <Flex direction='row'>
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rating >= 0.5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rating >= 1.5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rating >= 2.5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rating >= 3.5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rating >= 4.5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                />
+              </Flex>
             )
-          }
+            }
             <Button
               variant={requested ? 'lightBrand' : 'darkBrand'}
               color={requested ? 'black' : 'white'}

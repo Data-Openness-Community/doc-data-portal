@@ -68,7 +68,8 @@ export default function Marketplace() {
           datasetname: data[key].dataset_name,
           owner: data[key].owners[0].owner_name,
           table_description: data[key].table_description,
-          rating: data[key].rating
+          rating: data[key].rating,
+          fields: data[key].fields
         }));
         // Update the state with the new array
         setDatasets(loadedDatasets);
@@ -134,6 +135,7 @@ export default function Marketplace() {
                     table_description={dataset.table_description}
                     datasetname={dataset.datasetname}
                     rating={dataset.rating}
+                    fields={dataset.fields}
                   />
                 ))
               }

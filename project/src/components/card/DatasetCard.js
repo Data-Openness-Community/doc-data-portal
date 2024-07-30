@@ -32,7 +32,7 @@ export default function DatasetCard(props) {
   const [tableData, setTableData] = useState([]);
   const [sampleData, setSampleData] = useState([]);
   const [sampleColumnData, setSampleColumnData] = useState([]);
-  const { owner, table_description, datasetname, rating, fields } = props;
+  const { owner, table_description, datasetname, rating, fields, hasAccess } = props;
   const [requested, setRequested] = useState(false);
   const textColor = useColorModeValue("navy.700", "white");
   const textColorBid = useColorModeValue("brand.500", "white");
@@ -40,6 +40,9 @@ export default function DatasetCard(props) {
   const ICON = require('assets/dataset.json');
   const onClose = () => setIsOpen(false);
   const [columnsDataCheck, setColumnsDataCheck] = useState([]);
+  const [beginRating, setBeginRating] = useState(false);
+  const [rated, setRated] = useState(0);
+  const [currentRating, setCurrentRating] = useState(rating)
 
   const playerRef = useRef(null);
   const handleMouseEnter = () => {
@@ -100,6 +103,16 @@ export default function DatasetCard(props) {
         console.error(error)
       });
   };
+
+  const rateDataset = async (rating) => {
+    try {
+      const response = await fetch(`http://${Config.manageDataCatalogHost}/rate-dataset?rating=${rating}&dataset_name=${datasetname}`, {'method': 'POST'});
+      const data = await response.json();
+      setCurrentRating(data.rating);
+    } catch (error) {
+      console.error("Failed to rate dataset:", error);
+    }
+  }
 
   return (
     <Card p='20px'>
@@ -204,50 +217,51 @@ export default function DatasetCard(props) {
               "2xl": "row",
             }}
             mt='5px'>
-            <Text fontWeight='700' fontSize='sm' color={textColorBid}>
-              {rating !== "No rating" && "Rating:" || rating}
-            </Text>
-            {rating !== "No rating" && (
-              <Flex direction='row'>
-                <Icon
-                  transition='0.2s linear'
-                  w='20px'
-                  h='20px'
-                  as={rating >= 0.5 ? IoStar : IoStarOutline}
-                  color='brand.500'
-                />
-                <Icon
-                  transition='0.2s linear'
-                  w='20px'
-                  h='20px'
-                  as={rating >= 1.5 ? IoStar : IoStarOutline}
-                  color='brand.500'
-                />
-                <Icon
-                  transition='0.2s linear'
-                  w='20px'
-                  h='20px'
-                  as={rating >= 2.5 ? IoStar : IoStarOutline}
-                  color='brand.500'
-                />
-                <Icon
-                  transition='0.2s linear'
-                  w='20px'
-                  h='20px'
-                  as={rating >= 3.5 ? IoStar : IoStarOutline}
-                  color='brand.500'
-                />
-                <Icon
-                  transition='0.2s linear'
-                  w='20px'
-                  h='20px'
-                  as={rating >= 4.5 ? IoStar : IoStarOutline}
-                  color='brand.500'
-                />
-              </Flex>
-            )
-            }
-            <Button
+            <Flex>
+              <Text fontWeight='700' fontSize='sm' color={textColorBid} marginRight={2}>
+                {currentRating !== "No rating" && "Rating:" || currentRating}
+              </Text>
+              {currentRating !== "No rating" && (
+                <Flex>
+                  <Icon
+                    transition='0.2s linear'
+                    w='20px'
+                    h='20px'
+                    as={currentRating >= 0.5 ? IoStar : IoStarOutline}
+                    color='brand.500'
+                  />
+                  <Icon
+                    transition='0.2s linear'
+                    w='20px'
+                    h='20px'
+                    as={currentRating >= 1.5 ? IoStar : IoStarOutline}
+                    color='brand.500'
+                  />
+                  <Icon
+                    transition='0.2s linear'
+                    w='20px'
+                    h='20px'
+                    as={currentRating >= 2.5 ? IoStar : IoStarOutline}
+                    color='brand.500'
+                  />
+                  <Icon
+                    transition='0.2s linear'
+                    w='20px'
+                    h='20px'
+                    as={currentRating >= 3.5 ? IoStar : IoStarOutline}
+                    color='brand.500'
+                  />
+                  <Icon
+                    transition='0.2s linear'
+                    w='20px'
+                    h='20px'
+                    as={currentRating >= 4.5 ? IoStar : IoStarOutline}
+                    color='brand.500'
+                  />
+                </Flex>
+              )}
+            </Flex>
+            {!hasAccess && <Button
               variant={requested ? 'lightBrand' : 'darkBrand'}
               color={requested ? 'black' : 'white'}
               fontSize='sm'
@@ -265,7 +279,106 @@ export default function DatasetCard(props) {
               onClick={() => setRequested(true)}
               isDisabled={requested}>
               {requested ? 'Request submitted' : 'Request access'}
-            </Button>
+            </Button>}
+            {hasAccess && !beginRating && <Button
+              variant={'brand'}
+              color={'white'}
+              fontSize='sm'
+              fontWeight='500'
+              borderRadius='70px'
+              px='24px'
+              py='5px'
+              mt={{
+                base: "0px",
+                md: "10px",
+                lg: "0px",
+                xl: "10px",
+                "2xl": "0px",
+              }}
+              onClick={() => setBeginRating(true)}>
+              Rate this dataset
+            </Button>}
+            {beginRating && <Flex direction='column'>
+              <Flex>
+                <Text fontWeight='bold' mr='14px'>
+                  Rate this dataset:
+                </Text>
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rated >= 1 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                  onClick={() => {
+                    setRated(1);
+                  }}
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rated >= 2 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                  onClick={() => {
+                    setRated(2);
+                  }}
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rated >= 3 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                  onClick={() => {
+                    setRated(3);
+                  }}
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rated >= 4 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                  onClick={() => {
+                    setRated(4);
+                  }}
+                />
+                <Icon
+                  transition='0.2s linear'
+                  w='20px'
+                  h='20px'
+                  as={rated >= 5 ? IoStar : IoStarOutline}
+                  color='brand.500'
+                  onClick={() => {
+                    setRated(5);
+                  }}
+                />
+              </Flex>
+              <Flex justifyContent='space-evenly'>
+                <Button
+                  variant='brand'
+                  color='white'
+                  fontSize='sm'
+                  fontWeight='500'
+                  borderRadius='70px'
+                  px='24px'
+                  py='5px'
+                  onClick={() => {setBeginRating(false); rateDataset(rated); setRated(0)}}>
+                  Confirm
+                </Button>
+                <Button
+                  variant='action'
+                  color='black'
+                  fontSize='sm'
+                  fontWeight='500'
+                  borderRadius='70px'
+                  px='24px'
+                  py='5px'
+                  onClick={() => {setBeginRating(false); setRated(0)}}>
+                  Cancel
+                </Button>
+              </Flex>
+            </Flex>}
           </Flex>
         </Flex>
       </Flex>

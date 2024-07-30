@@ -136,6 +136,7 @@ export default function Marketplace() {
                     datasetname={dataset.datasetname}
                     rating={dataset.rating}
                     fields={dataset.fields}
+                    hasAccess={index==0}
                   />
                 ))
               }

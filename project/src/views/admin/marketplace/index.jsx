@@ -49,6 +49,7 @@ export default function Marketplace() {
   // States
   const [searchString, setSearchString] = useState("");
   const [datasets, setDatasets] = useState([]);
+  const [permissions, setPermissions] = useState([]);
 
   // Chakra Color Mode
   const textColor = useColorModeValue("secondaryGray.900", "white");
@@ -74,11 +75,22 @@ export default function Marketplace() {
         // Update the state with the new array
         setDatasets(loadedDatasets);
       } catch (error) {
-        console.error("Failed to fetch tickets:", error);
+        console.error("Failed to fetch datasets:", error);
       }
     };
-
     fetchDatasets();
+
+    const fetchPermissions = async () => {
+      try {
+        const response = await fetch(`http://${Config.manageDataCatalogHost}/check-user-access?username=${localStorage.getItem('loginName').split('@')[0]}`);
+        const datasetsPermissions = await response.json();
+        // Update the state with the new array
+        setPermissions(datasetsPermissions);
+      } catch (error) {
+        console.error("Failed to fetch permissions:", error);
+      }
+    };
+    fetchPermissions();
   }, []);
 
   return (
@@ -120,7 +132,7 @@ export default function Marketplace() {
                     mb='24px'
                     fontWeight='500'
                     size='lg'
-                    onChange={(value) => setSearchString(value.target.value)}
+                    onChange={(value) => {console.log(localStorage.getItem('loginName').split('@')[0]); setSearchString(value.target.value)}}
                   />
                 </FormControl>
               </Flex>
@@ -136,7 +148,7 @@ export default function Marketplace() {
                     datasetname={dataset.datasetname}
                     rating={dataset.rating}
                     fields={dataset.fields}
-                    hasAccess={index==0}
+                    hasAccess={permissions.includes(dataset.datasetname)}
                   />
                 ))
               }

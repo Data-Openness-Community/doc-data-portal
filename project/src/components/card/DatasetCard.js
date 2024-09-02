@@ -276,7 +276,27 @@ export default function DatasetCard(props) {
                 xl: "10px",
                 "2xl": "0px",
               }}
-              onClick={() => setRequested(true)}
+              onClick={() => {
+                setRequested(true);
+
+                fetch(`http://${Config.submitTicketHost}/submit-access-request`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    dataset_name: datasetname,
+                    user: localStorage.getItem('loginName')
+                  })
+                }).then((res) => {
+                  if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return res.text();
+                }).then((text) => {
+                    console.log(text)
+                })
+              }}
               isDisabled={requested}>
               {requested ? 'Request submitted' : 'Request access'}
             </Button>}

@@ -28,12 +28,12 @@ import SampleDataTable from "views/admin/dataTables/components/SampleDataTable";
 
 
 export default function TicketCard(props) {
+  const [ticketIsClosed, setTicketIsClosed] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [sampleData, setSampleData] = useState([]);
   const [sampleColumnData, setSampleColumnData] = useState([]);
   const { title, firstname, lastname, email, id, datasetname, tabledescription } = props;
   const [like, setLike] = useState(false);
-  const [requested, setRequested] = useState(false);
   const textColor = useColorModeValue("navy.700", "white");
   const textColorBid = useColorModeValue("brand.500", "white");
   // const { isOpen, onOpen, onClose } = useDisclosure();
@@ -145,6 +145,7 @@ export default function TicketCard(props) {
       })
       .then((resString) => {
         setIsApprovedOpen(true)
+        setTicketIsClosed(true)
         console.log(resString)
       })
       .catch((error) => {
@@ -152,89 +153,142 @@ export default function TicketCard(props) {
       });
   };
 
-  return (
-    <Card p='20px'>
-      <Flex direction={{ base: "column" }} justify='center'>
-        <Flex flexDirection='column' justify='space-between' h='100%'>
-          <Flex
-            justify='space-between'
-            direction={{
-              base: "row",
-              md: "column",
-              lg: "row",
-              xl: "column",
-              "2xl": "row",
-            }}
-            mb='auto'>
-            <Flex direction='row' align='end'>
-              <Link
-                color={textColor}
-                fontSize={{
-                  base: "xl",
-                  md: "lg",
-                  lg: "lg",
-                  xl: "lg",
-                  "2xl": "md",
-                  "3xl": "lg",
-                }}
-                mb='5px'
-                fontWeight='bold'
-                me='14px'
-                onClick={() => outputDataCatalog(id)}
-              >
-                {title}
-              </Link>
-              <>
-                <Modal isOpen={isOpen} onClose={onClose} size='full' isCentered>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader>{title}</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      {
-                        (
-                          <GridItem colStart={2} rowSpan={2}>
-                            <DataCatalogTable
-                              columnsData={columnsDataCheck}
-                              tableData={tableData}
-                              datasetname={datasetname}
-                            />
-                            <SampleDataTable
-                              columnsData={sampleColumnData}
-                              tableData={sampleData}
-                              datasetname={datasetname}
-                            />
-                          </GridItem>
-                        )
-                      }
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button variant="lightBrand" mr={3} onClick={onClose}>Close</Button>
+  const rejectTicket = (ticket_id) => {
+    if (ticket_id === null) {
+      return;
+    }
 
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-                <Modal isOpen={isApprovedOpen} onClose={onApprovedClose} size='sm' isCentered>
-                  <ModalOverlay />
-                  <ModalContent>
-                    {/* <ModalHeader>{title}</ModalHeader> */}
-                    <ModalCloseButton />
-                    <ModalBody>
-                      {
-                        (
-                          <Text>
-                            {"The ticket has been approved"}
-                          </Text>
-                        )
-                      }
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button variant="lightBrand" mr={3} onClick={onApprovedClose}>Close</Button>
+    const rejectTicketUrl = `http://${Config.manageTicketHost}/reject-ticket?ticketId=${ticket_id}`
 
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-              </>
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    };
+
+    fetch(rejectTicketUrl, requestOptions)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.text()
+      })
+      .then((resString) => {
+        setTicketIsClosed(true)
+        console.log(resString)
+      })
+  };
+
+  if (ticketIsClosed) {
+    return false
+  } else {
+    return (
+      <Card p='20px'>
+        <Flex direction={{ base: "column" }} justify='center'>
+          <Flex flexDirection='column' justify='space-between' h='100%'>
+            <Flex
+              justify='space-between'
+              direction={{
+                base: "row",
+                md: "column",
+                lg: "row",
+                xl: "column",
+                "2xl": "row",
+              }}
+              mb='auto'>
+              <Flex direction='row' align='end'>
+                <Link
+                  color={textColor}
+                  fontSize={{
+                    base: "xl",
+                    md: "lg",
+                    lg: "lg",
+                    xl: "lg",
+                    "2xl": "md",
+                    "3xl": "lg",
+                  }}
+                  mb='5px'
+                  fontWeight='bold'
+                  me='14px'
+                  onClick={() => outputDataCatalog(id)}
+                >
+                  {title}
+                </Link>
+                <>
+                  <Modal isOpen={isOpen} onClose={onClose} size='full' isCentered>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>{title}</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        {
+                          (
+                            <GridItem colStart={2} rowSpan={2}>
+                              <DataCatalogTable
+                                columnsData={columnsDataCheck}
+                                tableData={tableData}
+                                datasetname={datasetname}
+                              />
+                              <SampleDataTable
+                                columnsData={sampleColumnData}
+                                tableData={sampleData}
+                                datasetname={datasetname}
+                              />
+                            </GridItem>
+                          )
+                        }
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button variant="lightBrand" mr={3} onClick={onClose}>Close</Button>
+
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                  <Modal isOpen={isApprovedOpen} onClose={onApprovedClose} size='sm' isCentered>
+                    <ModalOverlay />
+                    <ModalContent>
+                      {/* <ModalHeader>{title}</ModalHeader> */}
+                      <ModalCloseButton />
+                      <ModalBody>
+                        {
+                          (
+                            <Text>
+                              {"The ticket has been approved"}
+                            </Text>
+                          )
+                        }
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button variant="lightBrand" mr={3} onClick={onApprovedClose}>Close</Button>
+
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                </>
+                <Text
+                  color='secondaryGray.600'
+                  fontSize={{
+                    base: "sm",
+                  }}
+                  mb='7px'
+                  fontWeight='400'
+                  me='14px'>
+                  {firstname}{' '}{lastname}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex
+              align='start'
+              // justify='space-between'
+              direction={{
+                base: "row",
+                md: "column",
+                lg: "row",
+                xl: "column",
+                "2xl": "row",
+              }}
+              mt='5px'>
               <Text
                 color='secondaryGray.600'
                 fontSize={{
@@ -243,67 +297,65 @@ export default function TicketCard(props) {
                 mb='7px'
                 fontWeight='400'
                 me='14px'>
-                {firstname}{' '}{lastname}
+                {tabledescription}
               </Text>
             </Flex>
-          </Flex>
-          <Flex
-            align='start'
-            // justify='space-between'
-            direction={{
-              base: "row",
-              md: "column",
-              lg: "row",
-              xl: "column",
-              "2xl": "row",
-            }}
-            mt='5px'>
-            <Text
-              color='secondaryGray.600'
-              fontSize={{
-                base: "sm",
+            <Flex
+              align='start'
+              justify='space-between'
+              direction={{
+                base: "row",
+                md: "column",
+                lg: "row",
+                xl: "column",
+                "2xl": "row",
               }}
-              mb='7px'
-              fontWeight='400'
-              me='14px'>
-              {tabledescription}
-            </Text>
+              mt='5px'>
+              <Flex columnGap={2}>
+                <Button
+                  variant='darkBrand'
+                  color='white'
+                  fontSize='sm'
+                  fontWeight='500'
+                  borderRadius='70px'
+                  px='24px'
+                  py='5px'
+                  mt={{
+                    base: "0px",
+                    md: "10px",
+                    lg: "0px",
+                    xl: "10px",
+                    "2xl": "0px",
+                  }}
+                  onClick={() => approveTicket(id, datasetname, email)}
+                >
+                  {'Approve'}
+                </Button>
+                <Button
+                  variant='lightBrand'
+                  color='black'
+                  fontSize='sm'
+                  fontWeight='500'
+                  borderRadius='70px'
+                  px='24px'
+                  py='5px'
+                  mt={{
+                    base: "0px",
+                    md: "10px",
+                    lg: "0px",
+                    xl: "10px",
+                    "2xl": "0px",
+                  }}
+                  onClick={() => rejectTicket(id)}
+                >
+                  {'Reject'}
+                </Button>
+              </Flex>
+            </Flex>
+            
           </Flex>
-          <Flex
-            align='start'
-            justify='space-between'
-            direction={{
-              base: "row",
-              md: "column",
-              lg: "row",
-              xl: "column",
-              "2xl": "row",
-            }}
-            mt='5px'>
-            <Button
-              variant={requested ? 'lightBrand' : 'darkBrand'}
-              color={requested ? 'black' : 'white'}
-              fontSize='sm'
-              fontWeight='500'
-              borderRadius='70px'
-              px='24px'
-              py='5px'
-              mt={{
-                base: "0px",
-                md: "10px",
-                lg: "0px",
-                xl: "10px",
-                "2xl": "0px",
-              }}
-              onClick={() => approveTicket(id, datasetname, email)}
-            // isDisabled={requested}
-            >
-              {'Approve'}
-            </Button>
-          </Flex>
-          
         </Flex>
-      </Flex>
-    </Card>
-  );
+      </Card>
+    );
+  }
 }

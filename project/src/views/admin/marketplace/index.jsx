@@ -82,7 +82,7 @@ export default function Marketplace() {
 
     const fetchPermissions = async () => {
       try {
-        const response = await fetch(`http://${Config.manageDataCatalogHost}/check-user-access?username=${localStorage.getItem('loginName').split('@')[0]}`);
+        const response = await fetch(`http://${Config.listDatasetHost}/check-user-access?username=${localStorage.getItem('loginName').split('@')[0]}`);
         const datasetsPermissions = await response.json();
         // Update the state with the new array
         setPermissions(datasetsPermissions);

@@ -1,10 +1,10 @@
 const config = {
-    manageTicketHost: "52.230.30.185"
-    ,listDatasetHost: "52.230.30.185"
-    ,submitTicketHost: "52.230.30.185"
-    ,genAiHost: "52.230.30.185"
-    ,dataPropagateHost: "52.230.30.185"
-    ,manageDataCatalogHost: "52.230.30.185"
+    manageTicketHost: "HOST_IP"
+    ,listDatasetHost: "HOST_IP"
+    ,submitTicketHost: "HOST_IP"
+    ,genAiHost: "HOST_IP"
+    ,dataPropagateHost: "HOST_IP"
+    ,manageDataCatalogHost: "HOST_IP"
     ,validUsers:[
         { email: "admin@example.org", password: 'ZAQ!2wsxcde3', admin: "Y" }
         ,{ email: "felix@example.org", password: 'ZAQ!2wsxcde3' }

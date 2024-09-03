@@ -132,7 +132,7 @@ export default function Marketplace() {
                     mb='24px'
                     fontWeight='500'
                     size='lg'
-                    onChange={(value) => {console.log(localStorage.getItem('loginName').split('@')[0]); setSearchString(value.target.value)}}
+                    onChange={(value) => setSearchString(value.target.value)}
                   />
                 </FormControl>
               </Flex>

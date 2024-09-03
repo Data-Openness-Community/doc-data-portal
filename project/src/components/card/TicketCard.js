@@ -122,12 +122,13 @@ export default function TicketCard(props) {
       });
   };
 
-  const approveTicket = (ticket_id, datasetname, email) => {
+  const approveTicket = (ticket_id, ticket_title, datasetname, email) => {
     if (ticket_id === null) {
       return;
     }
 
     const approveTicketUrl = `http://${Config.manageTicketHost}/approveticket?ticketId=${ticket_id}&datasetName=${datasetname}&datasetOwner=${email}&datasetDescription=${tabledescription}`
+    const approveAccessUrl = `http://${Config.manageTicketHost}/approve-access?ticketId=${ticket_id}&datasetName=${datasetname}&user=${email.split('@')[0]}`
 
     const requestOptions = {
       method: 'PUT',
@@ -136,7 +137,7 @@ export default function TicketCard(props) {
       },
     };
 
-    fetch(approveTicketUrl, requestOptions)
+    fetch(ticket_title.startsWith("Deploy") ? approveTicketUrl : approveAccessUrl, requestOptions)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Network response was not ok');
@@ -327,7 +328,7 @@ export default function TicketCard(props) {
                     xl: "10px",
                     "2xl": "0px",
                   }}
-                  onClick={() => approveTicket(id, datasetname, email)}
+                  onClick={() => approveTicket(id, title, datasetname, email)}
                 >
                   {'Approve'}
                 </Button>

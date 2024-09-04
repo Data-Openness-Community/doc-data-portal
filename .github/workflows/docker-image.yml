@@ -27,8 +27,8 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: project
-          file: ./Dockerfile
+          context: .
+          file: Dockerfile
           push: true
           tags: dataopennesscommunity/demo-react:latest
     

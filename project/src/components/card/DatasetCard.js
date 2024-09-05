@@ -207,7 +207,6 @@ export default function DatasetCard(props) {
             </Flex>
           </Flex>
           <Flex
-            align='start'
             justify='space-between'
             direction={{
               base: "row",
@@ -216,56 +215,56 @@ export default function DatasetCard(props) {
               xl: "column",
               "2xl": "row",
             }}
-            mt='5px'>
-            <Flex>
+            mb='auto'>
+            <Flex align='center'>
               <Text fontWeight='700' fontSize='sm' color={textColorBid} marginRight={2}>
                 {currentRating !== "No rating" && "Rating:" || currentRating}
               </Text>
               {currentRating !== "No rating" && (
-                <Flex>
+                <Flex align='center'>
                   <Icon
                     transition='0.2s linear'
-                    w='20px'
-                    h='20px'
+                    w='15px'
+                    h='15px'
                     as={currentRating >= 0.5 ? IoStar : IoStarOutline}
                     color='brand.500'
                   />
                   <Icon
                     transition='0.2s linear'
-                    w='20px'
-                    h='20px'
+                    w='15px'
+                    h='15px'
                     as={currentRating >= 1.5 ? IoStar : IoStarOutline}
                     color='brand.500'
                   />
                   <Icon
                     transition='0.2s linear'
-                    w='20px'
-                    h='20px'
+                    w='15px'
+                    h='15px'
                     as={currentRating >= 2.5 ? IoStar : IoStarOutline}
                     color='brand.500'
                   />
                   <Icon
                     transition='0.2s linear'
-                    w='20px'
-                    h='20px'
+                    w='15px'
+                    h='15px'
                     as={currentRating >= 3.5 ? IoStar : IoStarOutline}
                     color='brand.500'
                   />
                   <Icon
                     transition='0.2s linear'
-                    w='20px'
-                    h='20px'
+                    w='15px'
+                    h='15px'
                     as={currentRating >= 4.5 ? IoStar : IoStarOutline}
                     color='brand.500'
                   />
                 </Flex>
-              )}
+                )}
             </Flex>
             {!hasAccess && <Button
               variant={requested ? 'lightBrand' : 'darkBrand'}
               color={requested ? 'black' : 'white'}
               fontSize='sm'
-              fontWeight='500'
+              fontWeight='700'
               borderRadius='70px'
               px='24px'
               py='5px'
@@ -318,15 +317,26 @@ export default function DatasetCard(props) {
               onClick={() => setBeginRating(true)}>
               Rate this dataset
             </Button>}
+          </Flex>
+          <Flex
+            justify='space-between'
+            direction={{
+              base: "row",
+              md: "column",
+              lg: "row",
+              xl: "column",
+              "2xl": "row",
+            }}
+            mb='auto'>
             {beginRating && <Flex direction='column'>
-              <Flex>
-                <Text fontWeight='bold' mr='14px'>
+              <Flex align='center' justifyItems='center'>
+                <Text fontWeight='700' fontSize='sm' mt='7px' mb='7px' me='14px' textAlign='center'>
                   Rate this dataset:
                 </Text>
                 <Icon
                   transition='0.2s linear'
-                  w='20px'
-                  h='20px'
+                  w='15px'
+                  h='15px'
                   as={rated >= 1 ? IoStar : IoStarOutline}
                   color='brand.500'
                   onClick={() => {
@@ -335,8 +345,8 @@ export default function DatasetCard(props) {
                 />
                 <Icon
                   transition='0.2s linear'
-                  w='20px'
-                  h='20px'
+                  w='15px'
+                  h='15px'
                   as={rated >= 2 ? IoStar : IoStarOutline}
                   color='brand.500'
                   onClick={() => {
@@ -345,8 +355,8 @@ export default function DatasetCard(props) {
                 />
                 <Icon
                   transition='0.2s linear'
-                  w='20px'
-                  h='20px'
+                  w='15px'
+                  h='15px'
                   as={rated >= 3 ? IoStar : IoStarOutline}
                   color='brand.500'
                   onClick={() => {
@@ -355,8 +365,8 @@ export default function DatasetCard(props) {
                 />
                 <Icon
                   transition='0.2s linear'
-                  w='20px'
-                  h='20px'
+                  w='15px'
+                  h='15px'
                   as={rated >= 4 ? IoStar : IoStarOutline}
                   color='brand.500'
                   onClick={() => {
@@ -365,8 +375,8 @@ export default function DatasetCard(props) {
                 />
                 <Icon
                   transition='0.2s linear'
-                  w='20px'
-                  h='20px'
+                  w='15px'
+                  h='15px'
                   as={rated >= 5 ? IoStar : IoStarOutline}
                   color='brand.500'
                   onClick={() => {
@@ -374,7 +384,7 @@ export default function DatasetCard(props) {
                   }}
                 />
               </Flex>
-              <Flex justifyContent='space-evenly'>
+              <Flex justifyContent='space-between'>
                 <Button
                   variant='brand'
                   color='white'

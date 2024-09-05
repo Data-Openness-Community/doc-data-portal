@@ -104,7 +104,7 @@ export default function Marketplace() {
         display={{ base: "block", xl: "grid" }}>
         <Flex
           flexDirection='column'
-          gridArea={{ xl: "1 / 1 / 2 / 4", "2xl": "1 / 1 / 2 / 2" }}>
+          gridArea={{ xl: "1 / 1 / 2 / 4", "2xl": "1 / 1 / 2 / 4" }}>
           {/* <Banner /> */}
           <Flex direction='column'>
             <Flex
@@ -137,7 +137,7 @@ export default function Marketplace() {
                 </FormControl>
               </Flex>
             </Flex>
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap='20px'>
+            <SimpleGrid columns={{ base: 1, md: 4 }} gap='20px'>
               {
                 datasets.map((dataset, index) => (
                   (dataset.owner.toLowerCase().includes(searchString.toLowerCase()) || (dataset.datasetname.toLowerCase().includes(searchString.toLowerCase()))) &&
